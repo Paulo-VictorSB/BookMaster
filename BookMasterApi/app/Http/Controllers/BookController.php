@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ListBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Response\Response;
 use App\Models\Author;
@@ -11,11 +12,56 @@ use App\Models\Publisher;
 
 class BookController extends Controller
 {
-    public function index()
+    public function list(ListBookRequest $request)
     {
-        $books = Book::all();
+        $response = new Response();
 
-        return (new Response)->setData($books)->response();
+        $validated = $request->validated();
+
+        $query = Book::query()->with(['authors', 'categories', 'publisher']);
+
+        if (isset($validated['search'])) {
+            $query->where('title', 'like', '%' . $validated['search'] . '%');
+        }
+
+        if (isset($validated['isbn'])) {
+            $query->where('isbn', '=', $validated['isbn']);
+        }
+
+        if (isset($validated['year'])) {
+            $query->where('release_year', '=', $validated['year']);
+        }
+
+        if (isset($validated['category'])) {
+            $query->whereHas('categories', function ($q) use ($validated) {
+                $q->where('name', '=', $validated['category']);
+            });
+        }
+
+        if (isset($validated['author'])) {
+            $query->whereHas('authors', function ($q) use ($validated) {
+                $q->where('name', 'like', '%' . $validated['author'] . '%');
+            });
+        }
+
+        if (isset($validated['publisher'])) {
+            $query->whereHas('publisher', function ($q) use ($validated) {
+                $q->where('name', 'like', '%' . $validated['publisher'] . '%');
+            });
+        }
+
+        $books = $query->get();        
+
+        if ($books->isEmpty()) {
+            return $response
+                ->setCode(404)
+                ->setData("Não encontramos livros que satisfaçam a sua pesquisa.")
+                ->response();
+        }
+
+        return $response
+            ->setData($books)
+            ->response();
     }
 
     public function store(StoreBookRequest $request)
@@ -54,7 +100,6 @@ class BookController extends Controller
             $book->categories()->attach($category->id);
 
             return $response
-                ->setCode(200)
                 ->setMessage('Livro criado com sucesso')
                 ->setData($book)
                 ->response();
