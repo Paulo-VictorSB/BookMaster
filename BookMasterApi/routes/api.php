@@ -3,6 +3,5 @@
 use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [BookController::class, 'index']);
-
-Route::post('/store', [BookController::class, 'store']);
+Route::get('book/list', [BookController::class, 'list']);
+Route::post('book/store', [BookController::class, 'store']);
