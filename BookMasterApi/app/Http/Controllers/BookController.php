@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ListBookRequest;
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Http\Response\Response;
 use App\Models\Author;
 use App\Models\Book;
@@ -50,7 +51,7 @@ class BookController extends Controller
             });
         }
 
-        $books = $query->get();        
+        $books = $query->get();
 
         if ($books->isEmpty()) {
             return $response
@@ -108,6 +109,44 @@ class BookController extends Controller
                 ->setStatus('error')
                 ->setCode(500)
                 ->setErrorMessage('Erro ao criar livro' . $e->getMessage())
+                ->response();
+        }
+    }
+
+    public function update(UpdateBookRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            $book = Book::find($validated['id']);
+
+            if (isset($validated['title'])) {
+                $book->update(['title' => $validated['title']]);
+            }
+
+            if (isset($validated['isbn'])) {
+                $book->update(['isbn' => $validated['isbn']]);
+            }
+
+            if (isset($validated['description'])) {
+                $book->update(['description' => $validated['description']]);
+            }
+
+            if (isset($validated['releaseYear'])) {
+                $book->update(['release_year' => $validated['releaseYear']]);
+            }
+
+            return $response
+                ->setMessage('Livro atualizado com sucesso')
+                ->setData($book->fresh())
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao atualizar livro' . $e->getMessage())
                 ->response();
         }
     }
