@@ -62,4 +62,41 @@ class PublisherController extends Controller
                 ->response();
         }
     }
+
+    public function update(UpdatePublisherRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            $publisher = Publisher::find($validated['id']);
+
+            if (!$publisher) {
+                return $response
+                    ->setCode(404)
+                    ->setErrorMessage("Editora não encontrada")
+                    ->response();
+            }
+
+            if (isset($validated['name'])) {
+                $publisher->update(['name' => $validated['name']]);
+            }
+
+            if (isset($validated['country'])) {
+                $publisher->update(['country' => $validated['country']]);
+            }
+
+            return $response
+                ->setMessage('Autor atualizado com sucesso')
+                ->setData($publisher->fresh())
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao atualizar autor' . $e->getMessage())
+                ->response();
+        }
+    }
 }
