@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ListBookRequest;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
+use App\Http\Requests\DeleteBookRequest;
 use App\Http\Response\Response;
 use App\Models\Author;
 use App\Models\Book;
@@ -147,6 +148,41 @@ class BookController extends Controller
                 ->setStatus('error')
                 ->setCode(500)
                 ->setErrorMessage('Erro ao atualizar livro' . $e->getMessage())
+                ->response();
+        }
+    }
+
+    public function delete(DeleteBookRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            if (isset($validated['id'])) {
+                $book = Book::find($validated['id']);
+            }
+
+            if (!$book) {
+                return $response
+                    ->setStatus('error')
+                    ->setCode(404)
+                    ->setErrorMessage('Livro não encontrado.')
+                    ->response();
+            }
+
+            $book->forceDelete();
+
+            return $response
+                ->setStatus('success')
+                ->setCode(200)
+                ->setMessage('Livro deletado com sucesso')
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao deletar livro' . $e->getMessage())
                 ->response();
         }
     }
