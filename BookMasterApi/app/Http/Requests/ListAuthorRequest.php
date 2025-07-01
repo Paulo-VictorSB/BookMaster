@@ -26,8 +26,8 @@ class ListAuthorRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.string' => 'O ISBN deve ser uma sequência de caracteres.',
-            'name.max' => 'O ISBN não pode ultrapassar 255 caracteres.',
+            'name.string' => 'O nome deve ser uma sequência de caracteres.',
+            'name.max' => 'O nome não pode ultrapassar 255 caracteres.',
 
             'birthdate.digits' => 'O ano deve conter exatamente 4 dígitos.',
             'birthdate.integer' => 'O ano deve ser um número inteiro.',
