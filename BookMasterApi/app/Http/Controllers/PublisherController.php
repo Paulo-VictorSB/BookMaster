@@ -99,4 +99,47 @@ class PublisherController extends Controller
                 ->response();
         }
     }
+
+    public function delete(DeletePublisherRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            if (isset($validated['id'])) {
+                $publisher = Publisher::find($validated['id']);
+            }
+
+            if (!$publisher) {
+                return $response
+                    ->setStatus('error')
+                    ->setCode(404)
+                    ->setErrorMessage('Editora não encontrada.')
+                    ->response();
+            }
+
+            if ($publisher->books()->exists()) {
+                return $response
+                    ->setStatus('error')
+                    ->setCode(409)
+                    ->setErrorMessage('Não é possível deletar a editora, pois ela possui livros cadastrados.')
+                    ->response();
+            }
+
+            $publisher->forceDelete();
+
+            return $response
+                ->setStatus('success')
+                ->setCode(200)
+                ->setMessage('Autor deletado com sucesso')
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao deletar Autor' . $e->getMessage())
+                ->response();
+        }
+    }
 }
