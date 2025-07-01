@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ListAuthorRequest;
 use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Requests\UpdateAuthorRequest;
 use App\Http\Response\Response;
 use App\Models\Author;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class AuthorController extends Controller
         }
 
         if (isset($validated['birthdate'])) {
-            $query->where('birthdate', 'like',$validated['birthdate'] . '%');
+            $query->where('birthdate', 'like', $validated['birthdate'] . '%');
         }
 
         if (isset($validated['bio'])) {
@@ -62,6 +63,47 @@ class AuthorController extends Controller
                 ->setStatus('error')
                 ->setCode(500)
                 ->setErrorMessage('Erro ao criar um autor' . $e->getMessage())
+                ->response();
+        }
+    }
+
+    public function update(UpdateAuthorRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            $author = Author::find($validated['id']);
+
+            if (!$author) {
+                return $response
+                    ->setCode(404)
+                    ->setErrorMessage("Autor não encontrado")
+                    ->response();
+            }
+
+            if (isset($validated['name'])) {
+                $author->update(['name' => $validated['name']]);
+            }
+
+            if (isset($validated['birthdate'])) {
+                $author->update(['birthdate' => $validated['birthdate']]);
+            }
+
+            if (isset($validated['bio'])) {
+                $author->update(['bio' => $validated['bio']]);
+            }
+
+            return $response
+                ->setMessage('Autor atualizado com sucesso')
+                ->setData($author->fresh())
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao atualizar autor' . $e->getMessage())
                 ->response();
         }
     }
