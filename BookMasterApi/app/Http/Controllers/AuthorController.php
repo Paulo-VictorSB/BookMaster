@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ListAuthorRequest;
+use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Response\Response;
 use App\Models\Author;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class AuthorController extends Controller
         $query = Author::query();
 
         if (isset($validated['name'])) {
-            $query->where('name', 'like', '%' . $validated['name'] . '%');
+            $query->where('title', 'like', '%' . $validated['name'] . '%');
         }
 
         if (isset($validated['birthdate'])) {
@@ -41,5 +42,27 @@ class AuthorController extends Controller
         return $response
             ->setData($authors)
             ->response();
+    }
+
+    public function store(StoreAuthorRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            $author = Author::create($validated);
+
+            return $response
+                ->setMessage('Autor criado com sucesso')
+                ->setData($author)
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao criar um autor' . $e->getMessage())
+                ->response();
+        }
     }
 }
