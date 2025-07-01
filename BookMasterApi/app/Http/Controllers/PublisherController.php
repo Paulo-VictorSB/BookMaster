@@ -40,4 +40,26 @@ class PublisherController extends Controller
             ->setData($publishers)
             ->response();
     }
+
+    public function store(StorePublisherRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            $publisher = Publisher::create($validated);
+
+            return $response
+                ->setMessage('Autor criado com sucesso')
+                ->setData($publisher)
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao criar um autor' . $e->getMessage())
+                ->response();
+        }
+    }
 }
