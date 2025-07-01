@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteAuthorRequest;
 use App\Http\Requests\ListAuthorRequest;
 use App\Http\Requests\StoreAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
@@ -104,6 +105,49 @@ class AuthorController extends Controller
                 ->setStatus('error')
                 ->setCode(500)
                 ->setErrorMessage('Erro ao atualizar autor' . $e->getMessage())
+                ->response();
+        }
+    }
+
+    public function delete(DeleteAuthorRequest $request)
+    {
+        $response = new Response();
+
+        try {
+            $validated = $request->validated();
+
+            if (isset($validated['id'])) {
+                $author = Author::find($validated['id']);
+            }
+
+            if (!$author) {
+                return $response
+                    ->setStatus('error')
+                    ->setCode(404)
+                    ->setErrorMessage('Autor não encontrado.')
+                    ->response();
+            }
+
+            if ($author->books()->exists()) {
+                return $response
+                    ->setStatus('error')
+                    ->setCode(409)
+                    ->setErrorMessage('Não é possível deletar o autor, pois ele possui livros cadastrados.')
+                    ->response();
+            }
+
+            $author->forceDelete();
+
+            return $response
+                ->setStatus('success')
+                ->setCode(200)
+                ->setMessage('Autor deletado com sucesso')
+                ->response();
+        } catch (\Exception $e) {
+            return $response
+                ->setStatus('error')
+                ->setCode(500)
+                ->setErrorMessage('Erro ao deletar Autor' . $e->getMessage())
                 ->response();
         }
     }
