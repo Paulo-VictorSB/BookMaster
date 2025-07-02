@@ -1,8 +1,30 @@
 @extends('layouts.homeLayout')
 
-@section('title', 'Página Inicial')
+<div class="container">
+    <section class="filters" id="filters">
+        <div class="filterInputs">
+            <button>Categoria</button>
+            <button>Autores</button>
+            <button>Editora</button>
+        </div>
+        <hr>
+        <div class="filterValues">
+            <a href="#">Romance</a>
+            <a href="#">Romance</a>
+            <a href="#">Romance</a>
+            <a href="#">Romance</a>
+        </div>
+    </section>
+    <section id="renderBooks" class="renderBooks">
 
-@section('content')
-<h2>Bem-vindo!</h2>
-    <p>Essa é a página inicial do site.</p>
-@endsection
+        <div class="order" id="order">
+            <div class="orderInputs">
+                <button>A-z</button>
+                <button>Z-a</button>
+                <button>Ano</button>
+                <button>Categoria</button>
+                <button>Autor</button>
+            </div>
+        </div>
+    </section>
+</div>
