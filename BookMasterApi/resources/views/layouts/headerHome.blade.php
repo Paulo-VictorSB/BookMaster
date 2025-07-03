@@ -47,16 +47,28 @@
                     data['data'].forEach(book => {
                         const bookTitle = book.title;
                         const bookDescription = book.description;
-                        const shortBookDescription = bookDescription.substring(0, 100) + '...';
+                        const shortBookDescription = bookDescription.substring(0, 100) +
+                            '...';
                         const bookReleaseYear = book.release_year;
+                        let bookCategories = []
+                        let bookAuthors = []
 
-                        createBook(bookTitle, shortBookDescription, bookReleaseYear)
+                        book['categories'].forEach(element => {
+                            bookCategories.push(element['name']);
+                        });
+
+                        book['authors'].forEach(element => {
+                            bookAuthors.push(element['name']);
+                        });
+
+                        createBook(bookTitle, shortBookDescription, bookReleaseYear,
+                            bookCategories, bookAuthors)
                     });
                 })
                 .catch(err => console.error("Erro:", err));
         });
 
-        function createBook(title, description, releaseYear) {
+        function createBook(title, description, releaseYear, bookCategories, bookAuthors) {
             const book = document.createElement('div');
             book.classList.add('book');
 
@@ -68,9 +80,18 @@
 
             const bookDescription = document.createElement('div');
             bookDescription.classList.add('bookDescription');
-            const small = document.createElement('small');
-            small.textContent = description;
-            bookDescription.appendChild(small);
+
+            const smallDesc = document.createElement('small');
+            smallDesc.innerHTML = description + '<br>';
+            bookDescription.appendChild(smallDesc);
+
+            const smallCategories = document.createElement('small');
+            smallCategories.innerHTML = `Categorias: ${bookCategories.join(', ')}` + '<br>';
+            bookDescription.appendChild(smallCategories);
+
+            const smallAuthors = document.createElement('small');
+            smallAuthors.innerHTML = `Autores: ${bookAuthors.join(', ')}`;
+            bookDescription.appendChild(smallAuthors);
 
             const btn = document.createElement('button');
             btn.classList.add('bookDetails');
