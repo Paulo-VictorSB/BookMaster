@@ -15,6 +15,8 @@
     {{-- Hero section --}}
     @include('layouts.heroHome')
     @yield('heroHome')
+    {{-- Main Content --}}
+    @yield('main')
 
 </body>
 </html>

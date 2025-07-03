@@ -14,6 +14,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const searchBox = document.querySelector('.searchBox');
         const searchField = document.querySelector('#searchField');
+        const books = document.querySelector('#books');
 
         function validated(text) {
             const regex = /^.{3,255}$/;
@@ -25,19 +26,62 @@
             const text = searchField.value.trim();
 
             if (text === "") {
-                console.error("O campo de busca está vazio.");
+                books.innerHTML = 'O campo de busca está vazio.';
                 return;
             }
 
             if (!validated(text)) {
-                console.error("A busca deve conter entre 3 e 255 caracteres.");
+                books.innerHTML = 'A busca deve conter entre 3 e 255 caracteres.';
                 return;
             }
 
             fetch(`/api/book/list?search=${encodeURIComponent(text)}`)
                 .then(res => res.json())
-                .then(data => console.log(data))
+                .then(data => {
+                    books.innerHTML = '';
+                    if (data.code != 200) {
+                        books.innerHTML = data['data'];
+                        return;
+                    }
+
+                    data['data'].forEach(book => {
+                        const bookTitle = book.title;
+                        const bookDescription = book.description;
+                        const shortBookDescription = bookDescription.substring(0, 100) + '...';
+                        const bookReleaseYear = book.release_year;
+
+                        createBook(bookTitle, shortBookDescription, bookReleaseYear)
+                    });
+                })
                 .catch(err => console.error("Erro:", err));
         });
+
+        function createBook(title, description, releaseYear) {
+            const book = document.createElement('div');
+            book.classList.add('book');
+
+            const h3 = document.createElement('h3');
+            h3.textContent = `${title} - ${releaseYear}`;
+
+            const bookImg = document.createElement('div');
+            bookImg.classList.add('bookImg');
+
+            const bookDescription = document.createElement('div');
+            bookDescription.classList.add('bookDescription');
+            const small = document.createElement('small');
+            small.textContent = description;
+            bookDescription.appendChild(small);
+
+            const btn = document.createElement('button');
+            btn.classList.add('bookDetails');
+            btn.textContent = 'Ver mais';
+
+            book.appendChild(h3);
+            book.appendChild(bookImg);
+            book.appendChild(bookDescription);
+            book.appendChild(btn);
+
+            books.appendChild(book);
+        }
     });
 </script>
