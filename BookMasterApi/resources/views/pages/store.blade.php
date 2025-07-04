@@ -65,7 +65,7 @@
                     <label for="country">País</label>
                     <input type="text" name="country" id="country">
                 </fieldset>
-                <button type="submit"><i class="fa-solid fa-plus"></i> Criar</button>
+                <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Criar</button>
             </form>
             <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
         </div>
@@ -166,7 +166,41 @@
             if (errors.length > 0) {
                 alert("Erros encontrados:\n\n" + errors.join("\n"));
                 return;
-            }            
+            }
+
+            const body = {
+                title: title,
+                isbn: isbn,
+                publisher: publisher,
+                publisherCountry: publisherCountry,
+                releaseYear: releaseYear,
+                description: description,
+                author: author,
+                category: category,
+                authorBirthdate: authorBirthdate,
+                authorBio: authorBio,
+            }
+
+            fetch('api/book/store', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(body)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code == 422) {
+                        alert(data.aditionalFields);
+                        return;
+                    }
+
+                    if (data.code == 500) {
+                        alert('erro interno do servidor');
+                        return;
+                    }
+
+                    alert(data.message);
+                    window.location.href = `/details/?id=${data.data.id}`
+                })
         })
     </script>
 @endsection

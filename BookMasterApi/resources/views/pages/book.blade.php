@@ -53,7 +53,7 @@
                 <input type="text" name="isbn" value="{{ $book->isbn }}">
 
                 <button type="submit"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
-                <button href="/api/book/delete/?id={{ $book->id }}"><i class="fa-solid fa-trash"></i> Apagar</button>
+                <button tpye="button" id="delete"><i class="fa-solid fa-trash"></i> Apagar</button>
             </form>
         </div>
     </div>
@@ -78,7 +78,7 @@
             e.preventDefault();
 
             const formData = {
-                id: {{$book->id}},
+                id: {{ $book->id }},
                 title: editForm.title.value,
                 isbn: editForm.isbn?.value,
                 description: editForm.description.value,
@@ -86,12 +86,12 @@
             };
 
             const publisherData = {
-                id: {{$book->publisher->id}},
+                id: {{ $book->publisher->id }},
                 name: editForm.publisher?.value
             };
 
             const authorData = {
-                id: {{$book->authors[0]->id}},
+                id: {{ $book->authors[0]->id }},
                 name: editForm.author?.value
             };
 
@@ -106,44 +106,38 @@
                 return;
             }
 
-            try {
-                const bookResponse = await fetch('/api/book/update', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
+            const bookResponse = await fetch('/api/book/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
 
-                if (!bookResponse.ok) throw new Error('Erro ao atualizar o livro');
+            if (!bookResponse.ok) throw new Error('Erro ao atualizar o livro');
 
-                const publisherResponse = await fetch('/api/publisher/update', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(publisherData)
-                });
+            const publisherResponse = await fetch('/api/publisher/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(publisherData)
+            });
 
-                if (!publisherResponse.ok) throw new Error('Erro ao atualizar a editora');
+            if (!publisherResponse.ok) throw new Error('Erro ao atualizar a editora');
 
-                const authorResponse = await fetch('/api/author/update', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(authorData)
-                });
+            const authorResponse = await fetch('/api/author/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(authorData)
+            });
 
-                if (!authorResponse.ok) throw new Error('Erro ao atualizar o autor');
+            if (!authorResponse.ok) throw new Error('Erro ao atualizar o autor');
 
-                alert('Atualização realizada com sucesso!');
-                window.location.reload();
-
-            } catch (error) {
-                console.error('Erro ao atualizar:', error);
-                alert('Erro durante a atualização. Verifique os dados e tente novamente.');
-            }
+            alert('Atualização realizada com sucesso!');
+            window.location.reload();
 
         })
 
@@ -184,5 +178,34 @@
 
             return errors;
         }
+
+        document.querySelector('#delete').addEventListener('click', () => {
+            if (!confirm('Tem certeza que deseja apagar este livro?')) return;
+
+            fetch('/api/book/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: {{ $book->id }}
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status !== 'success') {
+                        console.error('Erro ao apagar:', data);
+                        alert('Erro ao apagar o livro.');
+                        return;
+                    }
+
+                    alert('Livro apagado com sucesso!');
+                    window.location.href = '/';
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    alert('Erro na requisição de exclusão.');
+                });
+        });
     </script>
 @endsection

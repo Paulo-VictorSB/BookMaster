@@ -403,28 +403,45 @@ body {
     background-color: white;
     padding: 10px;
     flex-flow: column wrap;
-    align-items: start;
+    align-items: center;
 }
 
 #createBookForm {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column wrap;
     gap: 10px;
     width: 100%;
-    justify-content: space-between;
+    align-items: center;
 }
 
 fieldset {
     padding: 10px;
     display: flex;
     flex-flow: column nowrap;
+    width: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
-fieldset > input {
+fieldset > input, fieldset > select {
     padding: 5px;
 }
 
 fieldset > textarea {
     resize: none;
     padding: 5px;
+}
+
+#createBookForm > button{
+    outline: auto black;
+    text-align: black;
+    padding: 5px 20px;
+    border-radius: 0px;
+    border: 1px;
+}
+
+#createBookForm > button:hover{
+    outline: auto black;
+    text-align: white;
+    padding: 5px 20px;
+    border-radius: 0px;
 }
