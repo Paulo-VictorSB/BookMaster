@@ -5,8 +5,11 @@
         <div class="container">
 
             <div id="filters">
-                <form class="filterButtons" id="filterForm">
 
+                <a href="/store" class="checkboxBtn" style="width: 100%; margin-bottom: 20px;"><i class="fa-solid fa-plus"></i> Novo</a>
+                
+                <form class="filterButtons" id="filterForm">
+                    <h3>Filtros</h3>
                     <div class="filtersWrapper">
                         <label class="checkboxBtn">
                             <input type="checkbox" name="categoria" hidden>

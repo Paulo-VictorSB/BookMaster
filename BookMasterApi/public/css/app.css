@@ -393,3 +393,38 @@ body {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
+
+.createBook {
+    display: flex;
+    justify-content: center;
+}
+
+.createBook > .container {
+    background-color: white;
+    padding: 10px;
+    flex-flow: column wrap;
+    align-items: start;
+}
+
+#createBookForm {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+}
+
+fieldset {
+    padding: 10px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+fieldset > input {
+    padding: 5px;
+}
+
+fieldset > textarea {
+    resize: none;
+    padding: 5px;
+}
