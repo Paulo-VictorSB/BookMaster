@@ -239,6 +239,14 @@ body {
     font-weight: bold;
 }
 
+.bookDetails:hover {
+    background-image: none;
+    color: #EF4444;
+    transition: .4s;
+    outline: auto var(--principal);
+    cursor: pointer;
+}
+
 .btnFilters:hover,
 .btnOrder:hover {
     background-color: white;
@@ -248,7 +256,7 @@ body {
     cursor: pointer;
 }
 
-.searchWrapper > .formControlText {
+.searchWrapper>.formControlText {
     border: 1px solid black;
     width: 100%;
     margin: 10px 0;
@@ -273,8 +281,8 @@ body {
     background-color: #333;
 }
 
-.checkboxBtn input:checked + i,
-.checkboxBtn input:checked + i + span {
+.checkboxBtn input:checked+i,
+.checkboxBtn input:checked+i+span {
     color: var(--principal);
 }
 
@@ -283,4 +291,105 @@ body {
     flex-flow: column wrap;
     gap: 5px;
     width: 100%;
+}
+
+#bookDetails {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+#bookDetails>.container {
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    max-width: 900px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+#bookDetails .infos {
+    flex: 2;
+}
+
+#bookDetails .img {
+    flex: 1;
+    max-width: 300px;
+}
+
+#bookDetails .img img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.back {
+    border: 1px solid black;
+    padding: 5px 10px;
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.back:hover {
+    background-color: black;
+    color: white;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    animation: fadeIn .3s ease-in-out;
+}
+
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    resize: none;
+}
+
+.modal-content button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
 }

@@ -87,7 +87,8 @@
                     const bookReleaseYear = book.release_year;
                     let bookCategories = [];
                     let bookAuthors = [];
-                    let bookPublishers = book['publisher']['name'];
+                    const bookPublishers = book['publisher']['name'];
+                    const bookId = book.id;
 
                     book['categories'].forEach(element => {
                         bookCategories.push(element['name']);
@@ -97,14 +98,21 @@
                         bookAuthors.push(element['name']);
                     });
 
-                    createBook(bookTitle, shortBookDescription, bookReleaseYear, bookCategories, bookAuthors, bookPublishers);
+                    createBook(bookId, bookTitle, shortBookDescription, bookReleaseYear, bookCategories,
+                        bookAuthors, bookPublishers);
                 });
             })
             .catch(err => console.error("Erro:", err));
 
-        function createBook(title, description, releaseYear, bookCategories, bookAuthors, bookPublishers) {
+        function createBook(id, title, description, releaseYear, bookCategories, bookAuthors, bookPublishers) {
             const book = document.createElement('div');
             book.classList.add('book');
+
+            const bookId = document.createElement('input');
+            bookId.type = 'hidden';
+            bookId.id = 'id';
+            bookId.value = id;
+            bookId.name = 'id';
 
             const h3 = document.createElement('h3');
             h3.textContent = `${title} - ${releaseYear}`;
@@ -134,11 +142,15 @@
             const btn = document.createElement('button');
             btn.classList.add('bookDetails');
             btn.textContent = 'Ver mais';
+            btn.addEventListener('click', () => {
+                window.location.href = `/details/?id=${id}`;
+            })
 
             book.appendChild(h3);
             book.appendChild(bookImg);
             book.appendChild(bookDescription);
             book.appendChild(btn);
+            book.appendChild(bookId);
 
             books.appendChild(book);
         }
@@ -201,16 +213,26 @@
 
             books.innerHTML = "Carregando livros.."
 
-            const filter = document.querySelector('.filtersWrapper input[type="checkbox"]:checked').name;
+            const filter = document.querySelector('.filtersWrapper input[type="checkbox"]:checked');
             const searchFilter = document.querySelector('#searchFilter').value.trim();
 
-            if (!validateSearchField(filter, searchFilter)) {
-                books.innerHTML = 'Busca inválida.';
+            if (!filter) {
+                books.innerHTML = 'Você precisa selecionar um filtro de busca..';
+                return;
+            }
+
+            if (searchFilter == '') {
+                books.innerHTML = 'O campo de busca não pode estar vazio..';
+                return;
+            }
+
+            if (!validateSearchField(filter.name, searchFilter)) {
+                books.innerHTML = 'Busca inválida..';
                 return;
             }
 
             let arg;
-            switch (filter) {
+            switch (filter.name) {
                 case 'categoria':
                     arg = 'category';
                     break;
@@ -248,6 +270,7 @@
                         let bookCategories = [];
                         let bookAuthors = [];
                         let bookPublishers = book['publisher']['name'];
+                        const bookId = book.id;
 
                         book['categories'].forEach(element => {
                             bookCategories.push(element['name']);
@@ -257,7 +280,8 @@
                             bookAuthors.push(element['name']);
                         });
 
-                        createBook(bookTitle, shortBookDescription, bookReleaseYear, bookCategories,
+                        createBook(bookId, bookTitle, shortBookDescription, bookReleaseYear,
+                            bookCategories,
                             bookAuthors, bookPublishers)
                     });
                 })
@@ -276,7 +300,7 @@
                     case 'isbn':
                         return value.length >= 10 && value.length <= 13 && /^[0-9\-]+$/.test(value);
 
-                    case 'date':
+                    case 'year':
                         const year = parseInt(value, 10);
                         return /^\d{4}$/.test(value) && year >= 1000 && year <= currentYear;
 
