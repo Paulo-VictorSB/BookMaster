@@ -617,5 +617,5 @@ $.ajax({
   "errorMessage": "Erro interno do servidor: [detalhes do erro]"
 }
 ```
-
+Atualizações futuras: imagens nas capas, função para adicionar imagens no banner, ver detalhes do autor e da editora.
 ---
