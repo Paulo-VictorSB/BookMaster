@@ -1,6 +1,7 @@
 @extends('layouts.storeLayout')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="createBook">
         <div class="container">
             <h2>Dados do livro</h2>
@@ -113,6 +114,7 @@
         const createBookForm = document.querySelector('#createBookForm');
         createBookForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             let errors = [];
 
@@ -146,18 +148,26 @@
             if (isEmpty(description)) errors.push("Descrição é obrigatória.");
             if (!isDigits(releaseYear, 4) || !isValidYear(releaseYear)) errors.push("Ano de publicação inválido.");
 
-            if (isEmpty(author) || !isMinLength(author, 3) || !isMaxLength(author, 255)) errors.push(
-                "Nome do autor deve ter entre 3 e 255 caracteres.");
-            if (isEmpty(authorBirthdate) || !isDateBeforeToday(authorBirthdate)) errors.push(
-                "Data de nascimento inválida.");
-            if (isEmpty(authorBio) || !isMinLength(authorBio, 3)) errors.push(
-                "Biografia do autor deve ter no mínimo 3 caracteres.");
+            if (isEmpty(author) || !isMinLength(author, 3) || !isMaxLength(author, 255)) {
+                errors.push("Nome do autor deve ter entre 3 e 255 caracteres.");
+            }
 
-            if (isEmpty(category) || !isMinLength(category, 3) || !isMaxLength(category, 255)) errors.push(
-                "Nome da categoria deve ter entre 3 e 255 caracteres.");
+            if (isEmpty(authorBirthdate) || !isDateBeforeToday(authorBirthdate)) {
+                errors.push("Data de nascimento inválida.");
+            }
 
-            if (isEmpty(publisher) || !isMinLength(publisher, 3) || !isMaxLength(publisher, 255)) errors.push(
-                "Nome da editora deve ter entre 3 e 255 caracteres.");
+            if (isEmpty(authorBio) || !isMinLength(authorBio, 3)) {
+                errors.push("Biografia do autor deve ter no mínimo 3 caracteres.");
+            }
+
+            if (isEmpty(category) || !isMinLength(category, 3) || !isMaxLength(category, 255)) {
+                errors.push("Nome da categoria deve ter entre 3 e 255 caracteres.");
+            }
+
+            if (isEmpty(publisher) || !isMinLength(publisher, 3) || !isMaxLength(publisher, 255)) {
+                errors.push("Nome da editora deve ter entre 3 e 255 caracteres.");
+            }
+
             if (!isEmpty(publisherCountry) && (!isMinLength(publisherCountry, 3) || !isMaxLength(publisherCountry,
                     255))) {
                 errors.push("País da editora deve ter entre 3 e 255 caracteres se preenchido.");
@@ -168,39 +178,46 @@
                 return;
             }
 
-            const body = {
-                title: title,
-                isbn: isbn,
-                publisher: publisher,
-                publisherCountry: publisherCountry,
-                releaseYear: releaseYear,
-                description: description,
-                author: author,
-                category: category,
-                authorBirthdate: authorBirthdate,
-                authorBio: authorBio,
-            }
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('isbn', isbn);
+            formData.append('description', description);
+            formData.append('releaseYear', releaseYear);
 
-            fetch('api/book/store', {
+            formData.append('author', author);
+            formData.append('authorBirthdate', authorBirthdate);
+            formData.append('authorBio', authorBio);
+
+            formData.append('category', category);
+            formData.append('publisher', publisher);
+            formData.append('publisherCountry', publisherCountry);
+
+            fetch('/api/book/store', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.code == 422) {
-                        alert(data.aditionalFields);
+                    if (data.code === 422) {
+                        alert(data.aditionalFields ?? 'Erros de validação.');
                         return;
                     }
 
-                    if (data.code == 500) {
-                        alert('erro interno do servidor');
+                    if (data.code === 500) {
+                        alert('Erro interno do servidor.');
                         return;
                     }
 
                     alert(data.message);
-                    window.location.href = `/details/?id=${data.data.id}`
+                    window.location.href = `/details/?id=${data.data.id}`;
                 })
-        })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    alert('Erro ao enviar os dados.');
+                });
+        });
     </script>
 @endsection

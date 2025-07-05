@@ -70,7 +70,7 @@ class StoreBookRequest extends FormRequest
             'authorBio.string' => 'A biografia do autor deve ser um texto válido.',
 
             'publisherCountry.string' => 'O país da publicadora deve ser uma sequência de caracteres.',
-            'publisherCountry.max' => 'O país da publicadora não pode ultrapassar 255 caracteres.'
+            'publisherCountry.max' => 'O país da publicadora não pode ultrapassar 255 caracteres.',
         ];
     }
 

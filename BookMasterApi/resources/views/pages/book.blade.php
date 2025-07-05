@@ -18,9 +18,6 @@
                 <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
                 <div class="back"><i class="fa-solid fa-pencil"></i> Editar</div>
             </div>
-            <div class="img">
-                <img src="{{ asset('storage/capas/' . $book->cover_image) }}" alt="Capa do livro {{ $book->title }}">
-            </div>
         </div>
     </div>
 
