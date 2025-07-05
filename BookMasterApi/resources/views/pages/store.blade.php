@@ -1,7 +1,7 @@
 @extends('layouts.storeLayout')
 
 @section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="createBook">
         <div class="container">
             <h2>Dados do livro</h2>

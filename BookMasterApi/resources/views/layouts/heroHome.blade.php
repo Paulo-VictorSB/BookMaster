@@ -18,9 +18,13 @@
     const slider = document.getElementById('slider');
     const slides = document.querySelectorAll('.slide');
     let index = 1;
-    const slideWidth = slides[0].clientWidth;
+    let slideWidth = slides[0].clientWidth;
 
-    slider.style.transform = `translateX(-${index * slideWidth}px)`;
+    function updateSlideWidth() {
+        slideWidth = slides[0].clientWidth;
+        slider.style.transition = 'none';
+        slider.style.transform = `translateX(-${index * slideWidth}px)`;
+    }
 
     function goToSlide(i) {
         slider.style.transition = 'transform 0.5s ease';
@@ -33,6 +37,10 @@
         slider.style.transform = `translateX(-${i * slideWidth}px)`;
         index = i;
     }
+
+    updateSlideWidth();
+
+    window.addEventListener('resize', updateSlideWidth);
 
     setInterval(() => {
         goToSlide(index + 1);

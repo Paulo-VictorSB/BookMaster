@@ -54,10 +54,17 @@ class BookController extends Controller
 
         $books = $query->get();
 
-        if ($books->isEmpty()) {
+        if (isset($validated['search']) && $books->isEmpty()) {
             return $response
                 ->setCode(404)
                 ->setData("Não encontramos livros que satisfaçam a sua pesquisa.")
+                ->response();
+        }
+
+        if ($books->isEmpty()) {
+            return $response
+                ->setCode(404)
+                ->setData("Nenhum livro encontrado.")
                 ->response();
         }
 

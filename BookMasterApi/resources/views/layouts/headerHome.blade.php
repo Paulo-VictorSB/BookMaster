@@ -50,8 +50,10 @@
                         const shortBookDescription = bookDescription.substring(0, 100) +
                             '...';
                         const bookReleaseYear = book.release_year;
-                        let bookCategories = []
-                        let bookAuthors = []
+                        let bookCategories = [];
+                        let bookAuthors = [];
+                        let bookPublishers = book['publisher']['name'];
+                        const bookId = book.id;
 
                         book['categories'].forEach(element => {
                             bookCategories.push(element['name']);
@@ -61,48 +63,12 @@
                             bookAuthors.push(element['name']);
                         });
 
-                        createBook(bookTitle, shortBookDescription, bookReleaseYear,
-                            bookCategories, bookAuthors)
+                        createBook(bookId, bookTitle, shortBookDescription, bookReleaseYear,
+                            bookCategories,
+                            bookAuthors, bookPublishers)
                     });
                 })
                 .catch(err => console.error("Erro:", err));
         });
-
-        function createBook(title, description, releaseYear, bookCategories, bookAuthors) {
-            const book = document.createElement('div');
-            book.classList.add('book');
-
-            const h3 = document.createElement('h3');
-            h3.textContent = `${title} - ${releaseYear}`;
-
-            const bookImg = document.createElement('div');
-            bookImg.classList.add('bookImg');
-
-            const bookDescription = document.createElement('div');
-            bookDescription.classList.add('bookDescription');
-
-            const smallDesc = document.createElement('small');
-            smallDesc.innerHTML = description + '<br>';
-            bookDescription.appendChild(smallDesc);
-
-            const smallCategories = document.createElement('small');
-            smallCategories.innerHTML = `Categorias: ${bookCategories.join(', ')}` + '<br>';
-            bookDescription.appendChild(smallCategories);
-
-            const smallAuthors = document.createElement('small');
-            smallAuthors.innerHTML = `Autores: ${bookAuthors.join(', ')}`;
-            bookDescription.appendChild(smallAuthors);
-
-            const btn = document.createElement('button');
-            btn.classList.add('bookDetails');
-            btn.textContent = 'Ver mais';
-
-            book.appendChild(h3);
-            book.appendChild(bookImg);
-            book.appendChild(bookDescription);
-            book.appendChild(btn);
-
-            books.appendChild(book);
-        }
     });
 </script>
